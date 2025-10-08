@@ -1,40 +1,101 @@
 -- 安全启动函数
 local function main()
-    local ReplicatedStorage = game:GetService("ReplicatedStorage")
-    local Players = game:GetService("Players")
+    -- 首先确保所有服务都存在
+    local success, ReplicatedStorage = pcall(function()
+        return game:GetService("ReplicatedStorage")
+    end)
     
-    -- 等待玩家加入
-    if not Players.LocalPlayer then
-        Players:GetPropertyChangedSignal("LocalPlayer"):Wait()
+    if not success then
+        warn("无法获取ReplicatedStorage服务")
+        return
     end
     
+    local success2, Players = pcall(function()
+        return game:GetService("Players")
+    end)
+    
+    if not success2 then
+        warn("无法获取Players服务")
+        return
+    end
+    
+    print("服务加载成功")
+    
+    -- 安全等待玩家加入
     local localPlayer = Players.LocalPlayer
     if not localPlayer then
-        warn("无法获取LocalPlayer")
+        print("等待玩家加入...")
+        local playerAddedConnection
+        playerAddedConnection = Players.PlayerAdded:Connect(function(player)
+            if player == Players.LocalPlayer then
+                localPlayer = player
+                playerAddedConnection:Disconnect()
+            end
+        end)
+        
+        -- 同时使用属性变化监听
+        local propertyChangedConnection
+        propertyChangedConnection = Players:GetPropertyChangedSignal("LocalPlayer"):Connect(function()
+            if Players.LocalPlayer then
+                localPlayer = Players.LocalPlayer
+                propertyChangedConnection:Disconnect()
+                if playerAddedConnection then
+                    playerAddedConnection:Disconnect()
+                end
+            end
+        end)
+        
+        -- 等待最多10秒
+        for i = 1, 20 do
+            if localPlayer then
+                break
+            end
+            wait(0.5)
+        end
+    end
+    
+    if not localPlayer then
+        warn("等待玩家超时")
         return
     end
     
     print("玩家已加载:", localPlayer.Name)
     
-    -- 等待玩家脚本
-    localPlayer:WaitForChild("PlayerScripts")
+    -- 安全等待玩家脚本
+    local success3 = pcall(function()
+        localPlayer:WaitForChild("PlayerScripts")
+    end)
+    
+    if not success3 then
+        warn("等待PlayerScripts失败")
+        return
+    end
+    
+    print("PlayerScripts加载完成")
     
     -- 查找远程事件
-    local speakingEvent = ReplicatedStorage:FindFirstChild("SendLikelySpeakingUsers")
+    local speakingEvent
+    local success4, searchResult = pcall(function()
+        return ReplicatedStorage:FindFirstChild("SendLikelySpeakingUsers")
+    end)
     
-    if not speakingEvent then
+    if success4 and searchResult then
+        speakingEvent = searchResult
+    else
         -- 尝试在其他位置查找
         local possibleLocations = {
             ReplicatedStorage,
             game:GetService("ServerScriptService"),
-            game:GetService("ServerStorage"),
-            game:GetService("StarterPlayer").StarterPlayerScripts,
-            game:GetService("StarterPlayer").StarterCharacterScripts
+            game:GetService("ServerStorage")
         }
         
         for _, location in pairs(possibleLocations) do
-            speakingEvent = location:FindFirstChild("SendLikelySpeakingUsers")
-            if speakingEvent then
+            local success5, result = pcall(function()
+                return location:FindFirstChild("SendLikelySpeakingUsers")
+            end)
+            
+            if success5 and result then
+                speakingEvent = result
                 print("在 " .. location:GetFullName() .. " 中找到事件")
                 break
             end
@@ -43,50 +104,70 @@ local function main()
     
     if not speakingEvent then
         warn("=== 远程事件查找失败 ===")
-        warn("在以下位置查找SendLikelySpeakingUsers:")
-        warn("- ReplicatedStorage: " .. tostring(ReplicatedStorage:FindFirstChild("SendLikelySpeakingUsers") ~= nil))
-        warn("- ServerScriptService: " .. tostring(game:GetService("ServerScriptService"):FindFirstChild("SendLikelySpeakingUsers") ~= nil))
-        warn("- ServerStorage: " .. tostring(game:GetService("ServerStorage"):FindFirstChild("SendLikelySpeakingUsers") ~= nil))
+        print("在以下位置查找SendLikelySpeakingUsers:")
+        
+        local locationsToCheck = {
+            {name = "ReplicatedStorage", service = ReplicatedStorage},
+            {name = "ServerScriptService", service = game:GetService("ServerScriptService")},
+            {name = "ServerStorage", service = game:GetService("ServerStorage")}
+        }
+        
+        for _, location in pairs(locationsToCheck) do
+            local success6, exists = pcall(function()
+                return location.service:FindFirstChild("SendLikelySpeakingUsers") ~= nil
+            end)
+            print("- " .. location.name .. ": " .. tostring(success6 and exists))
+        end
         return
     end
     
-    if not speakingEvent:IsA("RemoteEvent") then
-        warn("找到的对象不是RemoteEvent，而是: " .. speakingEvent.ClassName)
+    -- 检查事件类型
+    local success7, isRemoteEvent = pcall(function()
+        return speakingEvent:IsA("RemoteEvent")
+    end)
+    
+    if not success7 or not isRemoteEvent then
+        warn("找到的对象不是RemoteEvent，而是: " .. (pcall(function() return speakingEvent.ClassName end) and speakingEvent.ClassName or "未知"))
         return
     end
     
     print("成功找到远程事件: " .. speakingEvent:GetFullName())
     
-    -- 事件处理
+    -- 事件处理函数
     local function handleSpeakingUsers(data)
         print("=== 收到语音数据 ===")
         print("数据类型:", type(data))
         
         if type(data) == "table" then
             for key, value in pairs(data) do
-                print("用户ID:", key, "说话状态:", value)
+                print("用户ID:", tostring(key), "说话状态:", tostring(value))
             end
         else
-            print("数据内容:", data)
+            print("数据内容:", tostring(data))
         end
     end
     
-    -- 连接事件
-    local success, err = pcall(function()
+    -- 安全连接事件
+    local success8, err = pcall(function()
         speakingEvent.OnClientEvent:Connect(handleSpeakingUsers)
     end)
     
-    if success then
+    if success8 then
         print("✅ 语音事件监听器设置成功!")
     else
-        warn("❌ 连接失败:", err)
+        warn("❌ 连接失败:", tostring(err))
     end
 end
 
+-- 延迟启动，确保环境就绪
+wait(2)
+
 -- 安全启动
-local success, errorMsg = pcall(main)
-if not success then
-    warn("脚本启动失败:", errorMsg)
+local finalSuccess, finalError = pcall(main)
+if not finalSuccess then
+    warn("脚本完全启动失败:", tostring(finalError))
+else
+    print("脚本执行完成")
 end
 local function CreateCertIcon(parentUI)
     local CertIcon = Instance.new("ImageLabel")
