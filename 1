@@ -1,0 +1,282 @@
+-- 1. 加载OrionLib（UI框架）
+local success, OrionLib = pcall(function()
+    return loadstring(game:HttpGet('https://pastebin.com/raw/xLRUSiKx'))()
+end)
+if not success then
+    warn("OrionLib加载失败，脚本无法运行")
+    return
+end
+
+-- 新增：认证图标创建函数（通用，可复用）
+local function CreateCertIcon(parentUI)
+    local CertIcon = Instance.new("ImageLabel")
+    CertIcon.Name = "CertificationIcon"
+    -- 使用Roblox内置认证类图标（可替换为自定义图片ID）
+    CertIcon.Image = "rbxassetid://10828557144" -- 盾牌认证图标，适配安全主题
+    CertIcon.Parent = parentUI
+    -- 位置：悬浮窗最右侧居中，与边框间距5px
+    CertIcon.Position = UDim2.new(1, -35, 0.5, -15)
+    CertIcon.Size = UDim2.new(0, 30, 0, 30)
+    CertIcon.BackgroundTransparency = 1
+    CertIcon.ScaleType = Enum.ScaleType.Fit -- 保持图标比例
+    -- 鼠标悬浮提示
+    local Tooltip = Instance.new("TextLabel")
+    Tooltip.Name = "IconTooltip"
+    Tooltip.Parent = CertIcon
+    Tooltip.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
+    Tooltip.BackgroundTransparency = 0.2
+    Tooltip.Position = UDim2.new(1, 5, 0, -25)
+    Tooltip.Size = UDim2.new(0, 120, 0, 20)
+    Tooltip.Font = Enum.Font.SourceSans
+    Tooltip.Text = "官方认证脚本"
+    Tooltip.TextColor3 = Color3.new(1, 1, 1)
+    Tooltip.TextScaled = true
+    Tooltip.TextWrapped = true
+    Tooltip.Visible = false -- 默认隐藏提示
+
+    -- 鼠标悬浮显示提示，离开隐藏
+    CertIcon.MouseEnter:Connect(function()
+        Tooltip.Visible = true
+    end)
+    CertIcon.MouseLeave:Connect(function()
+        Tooltip.Visible = false
+    end)
+    return CertIcon
+end
+
+-- 2. 卡密验证系统（防倒卖，需替换为你的卡密或对接后端）
+local function ShowKeySystem()
+    local ScreenGui = Instance.new("ScreenGui")
+    local UI = Instance.new("Frame")
+    local Title = Instance.new("TextLabel")
+    local KeyInput = Instance.new("TextBox")
+    local ConfirmBtn = Instance.new("TextButton")
+    
+    -- UI层级设置
+    ScreenGui.Parent = game.CoreGui
+    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    
+    -- 主面板
+    UI.Name = "KeySystem_UI"
+    UI.Parent = ScreenGui
+    UI.Active = true
+    UI.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
+    UI.BackgroundTransparency = 0.1
+    UI.BorderSizePixel = 2
+    UI.BorderColor3 = Color3.new(0, 0.6, 1)
+    UI.Position = UDim2.new(0.5, -150, 0.5, -80)
+    UI.Size = UDim2.new(0, 300, 0, 280)
+    UI.Draggable = true
+
+    -- 新增：在卡密验证悬浮窗右侧添加认证图标
+    CreateCertIcon(UI)
+    
+    -- 标题
+    Title.Name = "KeyTitle"
+    Title.Parent = UI
+    Title.BackgroundColor3 = Color3.new(0, 0.6, 1)
+    Title.Position = UDim2.new(0, 0, 0, 0)
+    Title.Size = UDim2.new(1, 0, 0, 40)
+    Title.Font = Enum.Font.GothamBold
+    Title.Text = "密钥验证（河北唐县死铁轨/偷走脑红专用）"
+    Title.TextColor3 = Color3.new(1, 1, 1)
+    Title.TextScaled = true
+    Title.TextWrapped = true
+    
+    -- 卡密输入框
+    KeyInput.Name = "KeyInput"
+    KeyInput.Parent = UI
+    KeyInput.BackgroundColor3 = Color3.new(1, 1, 1)
+    KeyInput.Position = UDim2.new(0.1, 0, 0.3, 0)
+    KeyInput.Size = UDim2.new(0.8, 0, 0, 50)
+    KeyInput.Font = Enum.Font.SourceSans
+    KeyInput.PlaceholderText = "ky.com858585"
+    KeyInput.Text = ""
+    KeyInput.TextColor3 = Color3.new(0, 0, 0)
+    KeyInput.TextScaled = true
+    KeyInput.ClearTextOnFocus = false
+    
+    -- 确认按钮
+    ConfirmBtn.Name = "ConfirmBtn"
+    ConfirmBtn.Parent = UI
+    ConfirmBtn.BackgroundColor3 = Color3.new(0, 0.6, 1)
+    ConfirmBtn.Position = UDim2.new(0.2, 0, 0.6, 0)
+    ConfirmBtn.Size = UDim2.new(0.6, 0, 0, 50)
+    ConfirmBtn.Font = Enum.Font.GothamBold
+    ConfirmBtn.Text = "验证并启动"
+    ConfirmBtn.TextColor3 = Color3.new(1, 1, 1)
+    ConfirmBtn.TextScaled = true
+    ConfirmBtn.TextWrapped = true
+    
+    -- 验证逻辑（实际使用时建议对接后端，此处为本地示例）
+    local ValidKeys = { -- 示例有效卡密，可替换为动态获取
+        "KY-2024-DEATHRAIL",
+        "KY-2024-BRAINRED",
+        "KY-2024-TEST001"
+    }
+    
+    ConfirmBtn.MouseButton1Click:Connect(function()
+        local InputKey = string.trim(KeyInput.Text)
+        if table.find(ValidKeys, InputKey) then
+            ScreenGui:Destroy()
+            StartMainScript() -- 验证通过，启动主功能
+        else
+            -- 弹窗提示（避免直接踢人，提升用户体验）
+            local Tip = Instance.new("TextLabel")
+            Tip.Parent = UI
+            Tip.BackgroundColor3 = Color3.new(1, 0.2, 0.2)
+            Tip.Position = UDim2.new(0.1, 0, 0.85, 0)
+            Tip.Size = UDim2.new(0.8, 0, 0, 30)
+            Tip.Font = Enum.Font.SourceSans
+            Tip.Text = "卡密错误！请联系开发者获取有效卡密"
+            Tip.TextColor3 = Color3.new(1, 1, 1)
+            Tip.TextScaled = true
+            game.Debris:AddItem(Tip, 3) -- 3秒后自动删除提示
+        end
+    end)
+end
+
+-- 3. 主功能脚本（验证通过后执行）
+local function StartMainScript()
+    -- 初始化主窗口
+    local MainWindow = OrionLib:MakeWindow({
+        Name = "河北唐县死铁轨/偷走脑红辅助",
+        HidePremium = false,
+        SaveConfig = true,
+        IntroText = "功能适配指定服务器，请勿滥用",
+        ConfigFolder = "RailBrain_Aux"
+    })
+
+    -- 新增：在主功能悬浮窗右侧添加认证图标（OrionLib窗口需定位到容器节点）
+    -- 延迟0.1秒确保窗口UI加载完成
+    task.wait(0.1)
+    local MainWindowContainer = MainWindow.Window -- 获取OrionLib窗口的根容器
+    if MainWindowContainer then
+        local MainCertIcon = CreateCertIcon(MainWindowContainer)
+        -- 调整主窗口图标位置（适配OrionLib默认UI尺寸）
+        MainCertIcon.Position = UDim2.new(1, -40, 0.5, -15)
+    end
+
+    -- ====================== 通用功能Tab ======================
+    local GeneralTab = MainWindow:MakeTab({
+        Name = "通用功能",
+        Icon = "rbxassetid://4483345998",
+        PremiumOnly = false
+    })
+
+    -- 3.1 移速调节（支持自定义数值）
+    GeneralTab:AddTextbox({
+        Name = "移动速度设置",
+        Default = "16", -- 默认Roblox移速
+        TextDisappear = true,
+        Callback = function(Value)
+            local Speed = tonumber(Value)
+            if not Speed then return end
+            local LocalPlayer = game.Players.LocalPlayer
+            LocalPlayer.CharacterAdded:Connect(function(Char)
+                local Humanoid = Char:WaitForChild("Humanoid")
+                Humanoid.WalkSpeed = Speed
+            end)
+            -- 实时更新当前角色移速
+            if LocalPlayer.Character then
+                local Humanoid = LocalPlayer.Character:FindFirstChild("Humanoid")
+                if Humanoid then Humanoid.WalkSpeed = Speed end
+            end
+            OrionLib:MakeNotification({
+                Title = "移速设置成功",
+                Text = "当前移速：" .. Speed,
+                Duration = 2
+            })
+        end
+    })
+
+    -- 3.2 飞行功能（V3版本，适配服务器物理）
+    local FlyEnabled = false
+    local FlyForce = 50
+    GeneralTab:AddButton({
+        Name = "飞行V3（开关）",
+        Callback = function()
+            FlyEnabled = not FlyEnabled
+            local LocalPlayer = game.Players.LocalPlayer
+            local Character = LocalPlayer.Character
+            if not Character then return end
+            local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
+            local Humanoid = Character:WaitForChild("Humanoid")
+            -- 飞行逻辑循环
+            game:GetService("RunService").Heartbeat:Connect(function()
+                if not FlyEnabled or not Character:IsDescendantOf(game.Workspace) then return end
+                Humanoid.PlatformStand = true -- 防止落地判定
+                local Camera = game.Workspace.CurrentCamera
+                local Direction = Vector3.new()
+                -- 键盘控制方向
+                if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.W) then
+                    Direction = Direction + Camera.CFrame.LookVector
+                end
+                if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.S) then
+                    Direction = Direction - Camera.CFrame.LookVector
+                end
+                if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.A) then
+                    Direction = Direction - Camera.CFrame.RightVector
+                end
+                if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.D) then
+                    Direction = Direction + Camera.CFrame.RightVector
+                end
+                if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.Space) then
+                    Direction = Direction + Vector3.new(0, 1, 0)
+                end
+                if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.LeftControl) then
+                    Direction = Direction - Vector3.new(0, 1, 0)
+                end
+                -- 应用飞行力
+                if Direction.Magnitude > 0 then
+                    HumanoidRootPart.Velocity = Direction.Unit * FlyForce
+                end
+            end)
+            -- 提示飞行状态
+            OrionLib:MakeNotification({
+                Title = "飞行功能",
+                Text = FlyEnabled and "已开启（WASD控制方向，空格上升，Ctrl下降）" or "已关闭",
+                Duration = 3
+            })
+        end
+    })
+
+    -- 3.3 穿墙功能（禁用碰撞）
+    local NoclipEnabled = false
+    GeneralTab:AddButton({
+        Name = "穿墙（开关）",
+        Callback = function()
+            NoclipEnabled = not NoclipEnabled
+            local LocalPlayer = game.Players.LocalPlayer
+            LocalPlayer.CharacterAdded:Connect(function(Char)
+                for _, Part in ipairs(Char:GetChildren()) do
+                    if Part:IsA("BasePart") then
+                        Part.CanCollide = not NoclipEnabled
+                    end
+                end
+                -- 监听新生成的部件（如武器、装备）
+                Char.ChildAdded:Connect(function(Part)
+                    if Part:IsA("BasePart") then
+                        Part.CanCollide = not NoclipEnabled
+                    end
+                end)
+            end)
+            -- 实时更新当前角色碰撞
+            if LocalPlayer.Character then
+                for _, Part in ipairs(LocalPlayer.Character:GetChildren()) do
+                    if Part:IsA("BasePart") then
+                        Part.CanCollide = not NoclipEnabled
+                    end
+                end
+            end
+            OrionLib:MakeNotification({
+                Title = "穿墙功能",
+                Text = NoclipEnabled and "已开启（注意：部分服务器可能检测）" or "已关闭",
+                Duration = 2
+            })
+        end
+    })
+
+    -- ====================== 死铁轨专用Tab ======================
+    local DeathRailTab = MainWindow:MakeTab({
+      
