@@ -1,20 +1,28 @@
-local function loadOrionLib()
-    local success, result = pcall(function()
-        local response = game:HttpGet('https://pastebin.com/raw/xLRUSiKx', true)
-        return loadstring(response)()
-    end)
-    return success, result
-end
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local success, OrionLib = loadOrionLib()
+-- 等待远程事件加载
+local speakingEvent
+local success, err = pcall(function()
+    speakingEvent = ReplicatedStorage:WaitForChild("SendLikelySpeakingUsers")
+end)
 
-if not success or not OrionLib then
-    warn("OrionLib加载失败: " .. tostring(OrionLib))
+if not success or not speakingEvent then
+    warn("无法找到SendLikelySpeakingUsers远程事件")
     return
 end
 
--- 继续你的脚本
-print("OrionLib加载成功！")
+-- 定义事件处理函数
+local function handleSpeakingUsers(data)
+    print("接收到语音用户数据")
+    -- 处理数据逻辑
+    for userId, speaking in pairs(data) do
+        print(`用户 {userId} 正在说话: {speaking}`)
+    end
+end
+
+-- 连接事件
+speakingEvent.OnClientEvent:Connect(handleSpeakingUsers)
+print("语音事件监听器已设置")
 local function CreateCertIcon(parentUI)
     local CertIcon = Instance.new("ImageLabel")
     CertIcon.Name = "CertificationIcon"
