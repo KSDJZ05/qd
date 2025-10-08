@@ -1,10 +1,20 @@
-local success, OrionLib = pcall(function()
-    return loadstring(game:HttpGet('https://pastebin.com/raw/xLRUSiKx'))()
-end)
-if not success then
-    warn("OrionLib加载失败，脚本无法运行")
+local function loadOrionLib()
+    local success, result = pcall(function()
+        local response = game:HttpGet('https://pastebin.com/raw/xLRUSiKx', true)
+        return loadstring(response)()
+    end)
+    return success, result
+end
+
+local success, OrionLib = loadOrionLib()
+
+if not success or not OrionLib then
+    warn("OrionLib加载失败: " .. tostring(OrionLib))
     return
 end
+
+-- 继续你的脚本
+print("OrionLib加载成功！")
 local function CreateCertIcon(parentUI)
     local CertIcon = Instance.new("ImageLabel")
     CertIcon.Name = "CertificationIcon"
