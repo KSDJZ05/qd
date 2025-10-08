@@ -1,39 +1,66 @@
-game:GetService("ReplicatedStorage").SendLikelySpeakingUsers.OnClientEvent:Connect(function(...)
-     local success, ReplicatedStorage = pcall(function()
-        return game:GetService("ReplicatedStorage")
-    end)
+存储说话用户的UI容器
+ local playerListUI = Instance.new("ScreenGui")
+ playerListUI.Name = "SpeakingUsersList"
+ playerListUI.Parent = game.Players.LocalPlayer.PlayerGui
+ local function CreatePlayerLabel(playerName)
+     local label = Instance.new("TextLabel")
+     label.Name = "Player_" .. playerName
+     label.Text = playerName .. " 正在说话"
+     label.Font = Enum.Font.SourceSans
+     label.TextSize = 18
+     label.TextColor3 = Color3.new(1, 1, 1)
+     label.BackgroundColor3 = Color3.new(0, 0.5, 1)
+     label.BackgroundTransparency = 0.2
+     label.Size = UDim2.new(0, 200, 0, 30)
+     label.Parent = playerListUI
+     return label
+ end
+ -- 远程事件业务逻辑：接收说话用户列表并显示
+ game:GetService("ReplicatedStorage").SendLikelySpeakingUsers.OnClientEvent:Connect(function(speakingUsers)
+     -- 清空原有列表
+     for _, child in ipairs(playerListUI:GetChildren()) do
+         if child:IsA("TextLabel") then
+             child:Destroy()
+         end
+     end
+     -- 创建新的用户标签
+     local yOffset = 0
+     for _, userName in ipairs(speakingUsers) do
+         local label = CreatePlayerLabel(userName)
+         label.Position = UDim2.new(0, 20, 0, yOffset)
+         yOffset = yOffset + 35
+     end
  end)
-local function CreateCertIcon(parentUI)
-    local CertIcon = Instance.new("ImageLabel")
-    CertIcon.Name = "CertificationIcon"
-    CertIcon.Image = "rbxassetid://10828557144"
-    CertIcon.Parent = parentUI
-    CertIcon.Position = UDim2.new(1, -35, 0.5, -15)
-    CertIcon.Size = UDim2.new(0, 30, 0, 30)
-    CertIcon.BackgroundTransparency = 1
-    CertIcon.ScaleType = Enum.ScaleType.Fit
-    local Tooltip = Instance.new("TextLabel")
-    Tooltip.Name = "IconTooltip"
-    Tooltip.Parent = CertIcon
-    Tooltip.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
-    Tooltip.BackgroundTransparency = 0.2
-    Tooltip.Position = UDim2.new(1, 5, 0, -25)
-    Tooltip.Size = UDim2.new(0, 120, 0, 20)
-    Tooltip.Font = Enum.Font.SourceSans
-    Tooltip.Text = "官方认证脚本"
-    Tooltip.TextColor3 = Color3.new(1, 1, 1)
-    Tooltip.TextScaled = true
-    Tooltip.TextWrapped = true
-    Tooltip.Visible = false -- 默认隐藏提示
-    CertIcon.MouseEnter:Connect(function()
-        Tooltip.Visible = true
-    end)
-    CertIcon.MouseLeave:Connect(function()
-        Tooltip.Visible = false
-    end)
-    return CertIcon
-end
-
+ local function CreateCertIcon(parentUI)
+     local CertIcon = Instance.new("ImageLabel")
+     CertIcon.Name = "CertificationIcon"
+     CertIcon.Image = "rbxassetid://10828557144"
+     CertIcon.Parent = parentUI
+     CertIcon.Position = UDim2.new(1, -35, 0.5, -15)
+     CertIcon.Size = UDim2.new(0, 30, 0, 30)
+     CertIcon.BackgroundTransparency = 1
+     CertIcon.ScaleType = Enum.ScaleType.Fit
+     local Tooltip = Instance.new("TextLabel")
+     Tooltip.Name = "IconTooltip"
+     Tooltip.Parent = CertIcon
+     Tooltip.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
+     Tooltip.BackgroundTransparency = 0.2
+     Tooltip.Position = UDim2.new(1, 5, 0, -25)
+     Tooltip.Size = UDim2.new(0, 120, 0, 20)
+     Tooltip.Font = Enum.Font.SourceSans
+     Tooltip.Text = "官方认证脚本"
+     Tooltip.TextColor3 = Color3.new(1, 1, 1)
+     Tooltip.TextScaled = true
+     Tooltip.TextWrapped = true
+     Tooltip.Visible = false
+     CertIcon.MouseEnter:Connect(function()
+         Tooltip.Visible = true
+     end)
+     CertIcon.MouseLeave:Connect(function()
+         Tooltip.Visible = false
+     end)
+     return CertIcon
+ end
 -- 2. 卡密验证系统（防倒卖，需替换为你的卡密或对接后端）
 local function ShowKeySystem()
     local ScreenGui = Instance.new("ScreenGui")
