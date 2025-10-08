@@ -1,7 +1,15 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
 
--- 等待游戏完全加载
-game:GetService("Players").LocalPlayer:WaitForChild("PlayerScripts")
+-- 安全等待 LocalPlayer 加载
+local localPlayer = Players.LocalPlayer
+if not localPlayer then
+    Players.PlayerAdded:Wait()  -- 等待玩家加入
+    localPlayer = Players.LocalPlayer
+end
+
+-- 等待玩家脚本加载
+localPlayer:WaitForChild("PlayerScripts")
 
 -- 多次尝试查找远程事件
 local speakingEvent
@@ -19,6 +27,12 @@ if not speakingEvent then
     warn("1. 该远程事件不存在于ReplicatedStorage中")
     warn("2. 事件名称拼写错误")
     warn("3. 事件在ServerScriptService或其他位置")
+    
+    -- 列出ReplicatedStorage中的所有子项以便调试
+    print("ReplicatedStorage中的内容:")
+    for _, child in pairs(ReplicatedStorage:GetChildren()) do
+        print(" - " .. child.Name .. " (" .. child.ClassName .. ")")
+    end
     return
 end
 
