@@ -99,7 +99,7 @@ local function ShowKeySystem()
     ConfirmBtn.Text = "验证并启动"
     ConfirmBtn.TextColor3 = Color3.new(1, 1, 1)
     ConfirmBtn.TextScaled = true
-    ConfirmBtn.TextWrapped = tru
+    ConfirmBtn.TextWrapped = true
     local ValidKeys = { --
         "KY-2024-DEATHRAIL",
         "KY-2024-BRAINRED",
