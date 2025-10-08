@@ -1,99 +1,149 @@
--- 等待PlayerGui加载
-local player = game.Players.LocalPlayer
-while not player:FindFirstChild("PlayerGui") do
-    wait(local success, ReplicatedStorage = pcall(function()
-        return game:GetService("ReplicatedStorage")
-    end))
-end
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
--- 存储说话用户的UI容器
-local playerListUI = Instance.new("ScreenGui")
-playerListUI.Name = "SpeakingUsersList"
-playerListUI.Parent = player.PlayerGui
-playerListUI.ResetOnSpawn = false -- 防止重生时重置
+-- 创建主窗口
+local Window = Rayfield:CreateWindow({
+    Name = "UI 示例窗口",
+    LoadingTitle = "加载中...",
+    LoadingSubtitle = "UI 元素示例",
+    ConfigurationSaving = {
+        Enabled = false,
+    },
+})
 
-local function CreatePlayerLabel(playerName)
-    local label = Instance.new("TextLabel")
-    label.Name = "Player_" .. playerName
-    label.Text = playerName .. " 正在说话"
-    label.Font = Enum.Font.SourceSansBold
-    label.TextSize = 18
-    label.TextColor3 = Color3.new(1, 1, 1)
-    label.BackgroundColor3 = Color3.new(0, 0.5, 1)
-    label.BackgroundTransparency = 0.2
-    label.Size = UDim2.new(0, 200, 0, 30)
-    label.Parent = playerListUI
-    return label
-end
+-- 创建标签页
+local Tab1 = Window:CreateTab("标签页1")
+local Tab2 = Window:CreateTab("标签页2")
+local Tab3 = Window:CreateTab("标签页3")
 
--- 安全地连接远程事件
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+-- 1. 切换开关(Toggle)示例
+local ToggleExample = Tab1:CreateToggle({
+    Name = "切换开关示例",
+    CurrentValue = false,
+    Flag = "ToggleExample",
+    Callback = function(Value)
+        print("切换开关状态:", Value)
+    end
+})
 
--- 检查远程事件是否存在
-local speakingUsersEvent = ReplicatedStorage:FindFirstChild("SendLikelySpeakingUsers")
-if speakingUsersEvent and speakingUsersEvent:IsA("RemoteEvent") then
-    speakingUsersEvent.OnClientEvent:Connect(function(speakingUsers)
-        -- 清空原有列表
-        for _, child in ipairs(playerListUI:GetChildren()) do
-            if child:IsA("TextLabel") then
-                child:Destroy()
-            end
-        end
-        
-        -- 创建新的用户标签
-        local yOffset = 0
-        for _, userName in ipairs(speakingUsers) do
-            local label = CreatePlayerLabel(userName)
-            label.Position = UDim2.new(0, 20, 0, yOffset)
-            yOffset = yOffset + 35
-        end
-    end)
-    
-    print("成功连接语音用户列表远程事件")
-else
-    warn("未找到 SendLikelySpeakingUsers 远程事件")
-end
+-- 2. 下拉菜单(Dropdown)示例
+local DropdownExample = Tab1:CreateDropdown({
+    Name = "下拉菜单示例",
+    Options = {"选项1", "选项2", "选项3"},
+    CurrentOption = "选项1",
+    MultipleOptions = false,
+    Flag = "DropdownExample",
+    Callback = function(Option)
+        print("选择的选项:", Option)
+    end,
+})
 
--- 创建认证图标函数
-local function CreateCertIcon(parentUI)
-    local CertIcon = Instance.new("ImageLabel")
-    CertIcon.Name = "CertificationIcon"
-    CertIcon.Image = "rbxassetid://10828557144"
-    CertIcon.Parent = parentUI
-    CertIcon.Position = UDim2.new(1, -35, 0.5, -15)
-    CertIcon.Size = UDim2.new(0, 30, 0, 30)
-    CertIcon.BackgroundTransparency = 1
-    CertIcon.ScaleType = Enum.ScaleType.Fit
+-- 3. 多选下拉菜单示例
+local MultiDropdownExample = Tab1:CreateDropdown({
+    Name = "多选下拉菜单示例",
+    Options = {"苹果", "香蕉", "橙子", "葡萄"},
+    CurrentOption = {"苹果", "香蕉"},
+    MultipleOptions = true,
+    Flag = "MultiDropdownExample",
+    Callback = function(Options)
+        print("选择的多个选项:", table.concat(Options, ", "))
+    end,
+})
 
-    local Tooltip = Instance.new("TextLabel")
-    Tooltip.Name = "IconTooltip"
-    Tooltip.Parent = CertIcon
-    Tooltip.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
-    Tooltip.BackgroundTransparency = 0.2
-    Tooltip.Position = UDim2.new(1, 5, 0, -25)
-    Tooltip.Size = UDim2.new(0, 120, 0, 20)
-    Tooltip.Font = Enum.Font.SourceSans
-    Tooltip.Text = "官方认证脚本"
-    Tooltip.TextColor3 = Color3.new(1, 1, 1)
-    Tooltip.TextScaled = true
-    Tooltip.TextWrapped = true
-    Tooltip.Visible = false
+-- 4. 滑块(Slider)示例
+local SliderExample = Tab1:CreateSlider({
+    Name = "滑块示例",
+    Range = {0, 100},
+    Increment = 1,
+    CurrentValue = 50,
+    Flag = "SliderExample",
+    Callback = function(Value)
+        print("滑块值:", Value)
+    end,
+})
 
-    CertIcon.MouseEnter:Connect(function()
-        Tooltip.Visible = true
-    end)
+-- 5. 颜色选择器(ColorPicker)示例
+local ColorPickerExample = Tab2:CreateColorPicker({
+    Name = "颜色选择器示例",
+    Color = Color3.fromRGB(255, 0, 0),
+    Callback = function(Color)
+        print("选择的颜色:", Color)
+    end
+})
 
-    CertIcon.MouseLeave:Connect(function()
-        Tooltip.Visible = false
-    end)
+-- 6. 按钮(Button)示例
+local ButtonExample = Tab2:CreateButton({
+    Name = "按钮示例",
+    Callback = function()
+        print("按钮被点击了!")
+    end,
+})
 
-    return CertIcon
-end
+-- 7. 输入框(TextBox)示例
+local TextBoxExample = Tab2:CreateInput({
+    Name = "ky",
+    PlaceholderText = "输入一些文字...",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(Text)
+        print("输入的文本:", Text)
+    end,
+})
 
--- 可选：在玩家列表UI上添加认证图标
-CreateCertIcon(playerListUI)
+-- 8. 键位绑定(Keybind)示例
+local KeybindExample = Tab3:CreateKeybind({
+    Name = "键位绑定示例",
+    CurrentKeybind = "Q",
+    HoldToInteract = false,
+    Flag = "KeybindExample", 
+    Callback = function(Keybind)
+        print("按下的键:", Keybind)
+    end,
+})
 
-print("语音用户列表UI初始化完成")
+-- 9. 标签(Label)示例
+local LabelExample = Tab3:CreateLabel({
+    Name = "标签示例",
+    Content = "这是一个静态文本标签",
+})
+
+-- 10. 段落(Paragraph)示例
+local ParagraphExample = Tab3:CreateParagraph({
+    Title = "段落标题",
+    Content = "这是一个多行文本段落，可以显示更长的说明性文本。\n这是第二行内容。"
+})
+
+-- 11. 通知(Notify)示例
+local NotifyButton = Tab3:CreateButton({
+    Name = "显示通知示例",
+    Callback = function()
+        Rayfield:Notify({
+            Title = "通知示例",
+            Content = "这是一个通知消息!",
+            Duration = 5,
+            Image = 4483362458,
+            Actions = {
+                Ignore = {
+                    Name = "忽略",
+                    Callback = function()
+                        print("用户点击了忽略")
+                    end
+                },
+            },
+        })
+    end,
+})
+
+-- 12. 部分(Section)示例
+local SectionExample = Tab3:CreateSection("部分标题示例")
+
+-- 在部分中添加元素
+local SectionToggle = Tab3:CreateToggle({
+    Name = "部分中的切换开关",
+    CurrentValue = true,
+    Flag = "SectionToggle",
+    Callback = function(Value)
+        print("部分中的开关:", Value)
+    end
+})
 -- 2. 卡密验证系统（防倒卖，需替换为你的卡密或对接后端）
 local function ShowKeySystem()
     local ScreenGui = Instance.new("ScreenGui")
