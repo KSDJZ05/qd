@@ -1,4 +1,4 @@
--- 1. 加载OrionLib（UI框架）
+
 local success, OrionLib = pcall(function()
     return loadstring(game:HttpGet('https://pastebin.com/raw/xLRUSiKx'))()
 end)
