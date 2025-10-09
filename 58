@@ -1,188 +1,36 @@
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
--- 创建主窗口
-local Window = Rayfield:CreateWindow({
-    Name = "UI 示例窗口",
-    LoadingTitle = "加载中...",
-    LoadingSubtitle = "UI 元素示例",
-    ConfigurationSaving = {
-        Enabled = false,
-    },
+    game:GetService("StarterGui"):SetCore("SendNotification",{ Title = "ky..."; Text ="欢迎"; Duration = 25; })
+
+local CoreGui = game:GetService("StarterGui")
+
+CoreGui:SetCore("SendNotification", {
+    Title = "ky",
+    Text = "反挂机已开启",
+    Duration = 5, 
 })
 
--- 创建标签页
-local Tab1 = Window:CreateTab("标签页1")
-local Tab2 = Window:CreateTab("标签页2")
-local Tab3 = Window:CreateTab("标签页3")
+local Sound = Instance.new("Sound")
+        Sound.Parent = game.SoundService
+        Sound.SoundId = "rbxassetid://6011094380"
+        Sound.Volume = 3
+        Sound.PlayOnRemove = true
+        Sound:Destroy()
 
--- 1. 切换开关(Toggle)示例
-local ToggleExample = Tab1:CreateToggle({
-    Name = "切换开关示例",
-    CurrentValue = false,
-    Flag = "ToggleExample",
-    Callback = function(Value)
-        print("切换开关状态:", Value)
-    end
+print("反挂机开启")
+		local vu = game:GetService("VirtualUser")
+		game:GetService("Players").LocalPlayer.Idled:connect(function()
+		   vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+		   wait(1)
+		   vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+		end)
+local OrionLib = loadstring(game:HttpGet('https://raw.githubusercontent.com/xiak27/637/refs/heads/main/xiao586.lua'))()
+local Window = OrionLib:MakeWindow({Name ="新脚本", HidePremium = false, SaveConfig = true,IntroText = "欢迎", ConfigFolder = "ky欢迎"})
+
+local Tab = Window:MakeTab({
+    Name = "信息",
+    Icon = "rbxassetid://10642752409",
+    PremiumOnly = false
 })
-
--- 2. 下拉菜单(Dropdown)示例
-local DropdownExample = Tab1:CreateDropdown({
-    Name = "下拉菜单示例",
-    Options = {"选项1", "选项2", "选项3"},
-    CurrentOption = "选项1",
-    MultipleOptions = false,
-    Flag = "DropdownExample",
-    Callback = function(Option)
-        print("选择的选项:", Option)
-    end,
-})
-
--- 3. 多选下拉菜单示例
-local MultiDropdownExample = Tab1:CreateDropdown({
-    Name = "多选下拉菜单示例",
-    Options = {"苹果", "香蕉", "橙子", "葡萄"},
-    CurrentOption = {"苹果", "香蕉"},
-    MultipleOptions = true,
-    Flag = "MultiDropdownExample",
-    Callback = function(Options)
-        print("选择的多个选项:", table.concat(Options, ", "))
-    end,
-})
-
--- 4. 滑块(Slider)示例
-local SliderExample = Tab1:CreateSlider({
-    Name = "滑块示例",
-    Range = {0, 100},
-    Increment = 1,
-    CurrentValue = 50,
-    Flag = "SliderExample",
-    Callback = function(Value)
-        print("滑块值:", Value)
-    end,
-})
-
--- 5. 颜色选择器(ColorPicker)示例
-local ColorPickerExample = Tab2:CreateColorPicker({
-    Name = "颜色选择器示例",
-    Color = Color3.fromRGB(255, 0, 0),
-    Callback = function(Color)
-        print("选择的颜色:", Color)
-    end
-})
-
--- 6. 按钮(Button)示例
-local ButtonExample = Tab2:CreateButton({
-    Name = "按钮示例",
-    Callback = function()
-        print("按钮被点击了!")
-    end,
-})
-
--- 7. 输入框(TextBox)示例
-local TextBoxExample = Tab2:CreateInput({
-    Name = "ky",
-    PlaceholderText = "输入一些文字...",
-    RemoveTextAfterFocusLost = false,
-    Callback = function(Text)
-        print("输入的文本:", Text)
-    end,
-})
-
--- 8. 键位绑定(Keybind)示例
-local KeybindExample = Tab3:CreateKeybind({
-    Name = "键位绑定示例",
-    CurrentKeybind = "Q",
-    HoldToInteract = false,
-    Flag = "KeybindExample", 
-    Callback = function(Keybind)
-        print("按下的键:", Keybind)
-    end,
-})
-
--- 9. 标签(Label)示例
-local LabelExample = Tab3:CreateLabel({
-    Name = "标签示例",
-    Content = "这是一个静态文本标签",
-})
-
--- 10. 段落(Paragraph)示例
-local ParagraphExample = Tab3:CreateParagraph({
-    Title = "段落标题",
-    Content = "这是一个多行文本段落，可以显示更长的说明性文本。\n这是第二行内容。"
-})
-
--- 11. 通知(Notify)示例
-local NotifyButton = Tab3:CreateButton({
-    Name = "显示通知示例",
-    Callback = function()
-        Rayfield:Notify({
-            Title = "通知示例",
-            Content = "这是一个通知消息!",
-            Duration = 5,
-            Image = 4483362458,
-            Actions = {
-                Ignore = {
-                    Name = "忽略",
-                    Callback = function()
-                        print("用户点击了忽略")
-                    end
-                },
-            },
-        })
-    end,
-})
-
--- 12. 部分(Section)示例
-local SectionExample = Tab3:CreateSection("部分标题示例")
-
--- 在部分中添加元素
-local SectionToggle = Tab3:CreateToggle({
-    Name = "部分中的切换开关",
-    CurrentValue = true,
-    Flag = "SectionToggle",
-    Callback = function(Value)
-        print("部分中的开关:", Value)
-    end
-})
--- 2. 卡密验证系统（防倒卖，需替换为你的卡密或对接后端）
-local function ShowKeySystem()
-    local ScreenGui = Instance.new("ScreenGui")
-    local UI = Instance.new("Frame")
-    local Title = Instance.new("TextLabel")
-    local KeyInput = Instance.new("TextBox")
-    local ConfirmBtn = Instance.new("TextButton")
-    
-    -- UI层级设置
-    ScreenGui.Parent = game.CoreGui
-    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-    
-    -- 主面板
-    UI.Name = "KeySystem_UI"
-    UI.Parent = ScreenGui
-    UI.Active = true
-    UI.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
-    UI.BackgroundTransparency = 0.1
-    UI.BorderSizePixel = 2
-    UI.BorderColor3 = Color3.new(0, 0.6, 1)
-    UI.Position = UDim2.new(0.5, -150, 0.5, -80)
-    UI.Size = UDim2.new(0, 300, 0, 280)
-    UI.Draggable = true
-
-    -- 新增：在卡密验证悬浮窗右侧添加认证图标
-    CreateCertIcon(UI)
-    
-    -- 标题
-    Title.Name = "KeyTitle"
-    Title.Parent = UI
-    Title.BackgroundColor3 = Color3.new(0, 0.6, 1)
-    Title.Position = UDim2.new(0, 0, 0, 0)
-    Title.Size = UDim2.new(1, 0, 0, 40)
-    Title.Font = Enum.Font.GothamBold
-    Title.Text = "密钥验证（河北唐县死铁轨/偷走脑红专用）"
-    Title.TextColor3 = Color3.new(1, 1, 1)
-    Title.TextScaled = true
-    Title.TextWrapped = true
-    
     -- 卡密输入框
     KeyInput.Name = "KeyInput"
     KeyInput.Parent = UI
