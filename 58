@@ -39,8 +39,6 @@ local Tab = Window:MakeTab({
     ConfirmBtn.TextWrapped = true
     local ValidKeys = { --
         "KY-2024-DEATHRAIL",
-        "KY-2024-BRAINRED",
-        "KY-2024-TEST001"
     }
     
     ConfirmBtn.MouseButton1Click:Connect(function()
