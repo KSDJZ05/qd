@@ -1,5 +1,4 @@
-
-    game:GetService("StarterGui"):SetCore("SendNotification",{ Title = "ky..."; Text ="欢迎"; Duration = 25; })
+game:GetService("StarterGui"):SetCore("SendNotification",{ Title = "ky..."; Text ="欢迎"; Duration = 25; })
 
 local CoreGui = game:GetService("StarterGui")
 
@@ -348,3 +347,4 @@ local function StartMainScript()
             })
         end
     })
+
