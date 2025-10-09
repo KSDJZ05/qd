@@ -14,33 +14,30 @@ local Tab = Window:MakeTab({
     Icon = "rbxassetid://10642752409",
     PremiumOnly = false
 })
-    -- 卡密输入框
-    KeyInput.Name = "KeyInput"
-    KeyInput.Parent = UI
-    KeyInput.BackgroundColor3 = Color3.new(1, 1, 1)
-    KeyInput.Position = UDim2.new(0.1, 0, 0.3, 0)
-    KeyInput.Size = UDim2.new(0.8, 0, 0, 50)
-    KeyInput.Font = Enum.Font.SourceSans
-    KeyInput.PlaceholderText = "ky.com858585"
-    KeyInput.Text = ""
-    KeyInput.TextColor3 = Color3.new(0, 0, 0)
-    KeyInput.TextScaled = true
-    KeyInput.ClearTextOnFocus = false
-    -- 确认按钮
-    ConfirmBtn.Name = "ConfirmBtn"
-    ConfirmBtn.Parent = UI
-    ConfirmBtn.BackgroundColor3 = Color3.new(0, 0.6, 1)
-    ConfirmBtn.Position = UDim2.new(0.2, 0, 0.6, 0)
-    ConfirmBtn.Size = UDim2.new(0.6, 0, 0, 50)
-    ConfirmBtn.Font = Enum.Font.GothamBold
-    ConfirmBtn.Text = "验证并启动"
-    ConfirmBtn.TextColor3 = Color3.new(1, 1, 1)
-    ConfirmBtn.TextScaled = true
-    ConfirmBtn.TextWrapped = true
-    local ValidKeys = { --
-        "KY-2024-DEATHRAIL",
-    }
-    
+local UI = Instance.new("ky2025sfstx")
+UI.Name = "SettingsUI"
+UI.Size = UDim2.new(0, 300, 0, 200)
+UI.Position = UDim2.new(0.5, -150, 0.5, -100)
+UI.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+UI.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+local KeyInput = Instance.new("TextBox")
+KeyInput.Name = "KeyInput"
+KeyInput.Size = UDim2.new(0, 200, 0, 30)
+KeyInput.Position = UDim2.new(0.5, -100, 0.3, -15)
+KeyInput.PlaceholderText = "请输入按键..."
+KeyInput.Parent = UI
+local ConfirmBtn = Instance.new("TextButton")
+ConfirmBtn.Name = "ConfirmBtn"
+ConfirmBtn.Size = UDim2.new(0, 100, 0, 30)
+ConfirmBtn.Position = UDim2.new(0.5, -50, 0.7, -15)
+ConfirmBtn.Text = "确认"
+ConfirmBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+ConfirmBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ConfirmBtn.Parent = UI
+KeyInput.Text = "默认值"
+ConfirmBtn.MouseButton1Click:Connect(function()
+    print("按钮被点击了！输入的按键是：" .. KeyInput.Text)
+end)
     ConfirmBtn.MouseButton1Click:Connect(function()
         local InputKey = string.trim(KeyInput.Text)
         if table.find(ValidKeys, InputKey) then
