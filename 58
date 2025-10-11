@@ -1,5 +1,15 @@
+-- 在 StartMainScript() 函数前添加 CreateCertIcon 函数
+local function CreateCertIcon(parent)
+    local CertIcon = Instance.new("ImageLabel")
+    CertIcon.Name = "CertificationIcon"
+    CertIcon.Parent = parent
+    CertIcon.BackgroundTransparency = 1
+    CertIcon.Size = UDim2.new(0, 30, 0, 30)
+    CertIcon.Image = "rbxassetid://7734068321" -- 使用现有图标
+    return CertIcon
+end
 
-		local vu = game:GetService("VirtualUser")
+local vu = game:GetService("VirtualUser")
 	game:GetService("Players").LocalPlayer.Idled:connect(function()
 		   vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
 		   wait(1)
@@ -108,43 +118,33 @@ TextButton.TextScaled = true
 TextButton.TextSize = 14.000
 TextButton.TextWrapped = true
 TextButton.MouseButton1Click:Connect(function()
-	if KeyTextbox.Text == key then
-		TextButton.Text = "正确!"
-		task.wait(2)
-		loadstring(game:HttpGet("脚本链接"))() -- insert script on this line
-		ScreenGui:Destroy()
-	else
-		TextButton.Text = "错误的卡密!"
-		task.wait(2)
-		TextButton.Text = "确定"
-	end
-	if KeyTextbox.Text == key then
-	    
-    elseif KeyTextbox.Text == "ilove78" then
-       TextButton.Text = "该卡密已过期，加群获得最新卡密😘!"
-		task.wait(4)
-		TextButton.Text = "确定"
-	elseif KeyTextbox.Text == "91vip" then
-       TextButton.Text = "该卡密已过期，加群获得最新卡密😘!"
-		task.wait(4)
-		TextButton.Text = "确定"
-	elseif KeyTextbox.Text == "群号" then
-       TextButton.Text = "该卡密已过期，加群获得最新卡密😘!"
-		task.wait(4)
-		TextButton.Text = "确定"
-	elseif KeyTextbox.Text == "xiaoai" then
-       TextButton.Text = "该卡密已过期，加群获得最新卡密😘!"
-		task.wait(4)
-		TextButton.Text = "确定"
-	elseif KeyTextbox.Text == "dajibaccb" then
-       TextButton.Text = "该卡密已过期，加群获得最新卡密😘!"
-		task.wait(4)
-		TextButton.Text = "确定"
-	elseif KeyTextbox.Text == "iamgay" then
-       TextButton.Text = "该卡密已过期，加群获得最新卡密😘!"
-		task.wait(4)
-		TextButton.Text = "确定"
-	end
+    local inputKey = KeyTextbox.Text
+    
+    -- 过期卡密检查
+    local expiredKeys = {
+        "ilove78", "91vip", "群号", "xiaoai", "dajibaccb", "iamgay"
+    }
+    
+    for _, expiredKey in ipairs(expiredKeys) do
+        if inputKey == expiredKey then
+            TextButton.Text = "该卡密已过期，加群获得最新卡密😘!"
+            task.wait(4)
+            TextButton.Text = "确定"
+            return
+        end
+    end
+    
+    -- 有效卡密检查
+    if inputKey == key then
+        TextButton.Text = "正确!"
+        task.wait(2)
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/KSDJZ05/qd/refs/heads/main/58"))()
+        ScreenGui:Destroy()
+    else
+        TextButton.Text = "错误的卡密!"
+        task.wait(2)
+        TextButton.Text = "确定"
+    end
 end)
 
 UICorner_3.CornerRadius = UDim.new(0, 15)
@@ -222,8 +222,7 @@ local function StartMainScript()
         Icon = "rbxassetid://4483345998",
         PremiumOnly = false
     })
-
-    -- 3.1 移速调节（支持自定义数值）
+ -- 3.1 移速调节（支持自定义数值）
     GeneralTab:AddTextbox({
         Name = "移动速度设置",
         Default = "16", -- 默认Roblox移速
@@ -268,7 +267,8 @@ local function StartMainScript()
                 local Camera = game.Workspace.CurrentCamera
                 local Direction = Vector3.new()
                 -- 键盘控制方向
-                if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.W) then
+                if
+                game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.W) then
                     Direction = Direction + Camera.CFrame.LookVector
                 end
                 if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.S) then
@@ -462,3 +462,5 @@ local function StartMainScript()
             })
         end
     })
+ -- 在脚本末尾添加
+StartMainScript()
