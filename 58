@@ -1,22 +1,35 @@
--- 在 StartMainScript() 函数前添加 CreateCertIcon 函数
-local function CreateCertIcon(parent)
-    local CertIcon = Instance.new("ImageLabel")
-    CertIcon.Name = "CertificationIcon"
-    CertIcon.Parent = parent
-    CertIcon.BackgroundTransparency = 1
-    CertIcon.Size = UDim2.new(0, 30, 0, 30)
-    CertIcon.Image = "rbxassetid://7734068321" -- 使用现有图标
-    return CertIcon
-end
+
+local CoreGui = game:GetService("StarterGui")
+CoreGui:SetCore("SendNotification", {
+    Title = "ky",
+    Text = "反挂机已开启",
+    Duration = 5
+})
+
+local Sound = Instance.new("Sound")
+Sound.Parent = game.SoundService
+Sound.SoundId = "rbxassetid://6011094380"
+Sound.Volume = 3
+Sound.PlayOnRemove = true
+Sound:Destroy()
+
+print("反挂机开启")
 
 local vu = game:GetService("VirtualUser")
-	game:GetService("Players").LocalPlayer.Idled:connect(function()
-		   vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-		   wait(1)
-		   vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-		end)
-local OrionLib = loadstring(game:HttpGet('https://raw.githubusercontent.com/xiak27/637/refs/heads/main/xiao586.lua'))()
-local Window = OrionLib:MakeWindow({Name ="新脚本", HidePremium = false, SaveConfig = true,IntroText = "欢迎", ConfigFolder = "ky欢迎"})
+game:GetService("Players").LocalPlayer.Idled:connect(function()
+    vu:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+    wait(1)
+    vu:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+end)
+
+local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/KSDJZ05/qd/refs/heads/main/58"))()
+local Window = OrionLib:MakeWindow({
+    Name = "M*", 
+    HidePremium = false, 
+    SaveConfig = true,
+    IntroText = "迎",
+    ConfigFolder = "ky欢迎"
+})
 
 local Tab = Window:MakeTab({
     Name = "信息",
